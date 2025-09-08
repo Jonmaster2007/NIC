@@ -1,0 +1,32 @@
+local function createAndStartRoom()
+    local args1 = {
+        [1] = {
+            [1] = {
+                ["index"] = "inviteOnly",
+                ["value"] = true
+            },
+            [2] = {
+                ["index"] = "groupId",
+                ["value"] = "Campaign"
+            }
+        }
+    }
+    game:GetService("ReplicatedStorage").Connection.lobby.room_create:FireServer(unpack(args1))
+    
+    task.wait(0.1)
+    
+local args2 = {
+    [1] = "map",
+    [2] = "Western front",
+    [3] = 1
+}
+
+game:GetService("ReplicatedStorage").Connection.lobby.room_edit:InvokeServer(unpack(args2))
+
+    
+    task.wait(0.1)
+    
+    game:GetService("ReplicatedStorage").Connection.lobby.room_start:FireServer()
+end
+
+createAndStartRoom()
