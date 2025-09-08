@@ -1,0 +1,186 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local task = task
+
+-- Waits for the End Turn button to have the desired text
+local function waitForButtonText(targetText)
+    local endTurnButton = Players.LocalPlayer.PlayerGui.GameGui.EndTurn.Button
+    repeat
+        task.wait()
+    until endTurnButton.Text == targetText
+end
+
+-- Wait until it’s the end of the turn (0/1)
+local function waitForEndTurn()
+    waitForButtonText("End turn 0/1")
+end
+
+-- Wait until it’s the start of the turn (1/1)
+local function waitForStartTurn()
+    waitForButtonText("End turn 1/1")
+end
+
+-- Make sure an entity model exists in Workspace.EntityModels
+-- If not found, keep retrying and trigger voting until it shows up
+local function ensureEntityModelExists(modelName)
+    local entityModel
+    repeat
+        task.wait(1) -- wait to avoid too many checks
+        entityModel = game:GetService("Workspace").EntityModels:FindFirstChild(modelName)
+        if not entityModel then
+            print("Model " .. modelName .. " not found, re-doing vote...")
+            ReplicatedStorage.Connection.inGame.Voting:FireServer()
+        end
+    until entityModel
+end
+
+-- Executes the automated sequence of actions
+local function executeActions()
+    local args
+
+    -- Deploy units
+    args = {
+        [1] = {
+            {["y"] = 944, ["x"] = -1264, ["units"] = {"_69a7", "_cc66", "_cc66"}},
+            {["y"] = 944, ["x"] = -1256, ["units"] = {"_69a7", "_cc66", "_cc66"}},
+            {["y"] = 944, ["x"] = -1272, ["units"] = {"_69a7", "_cc66", "_cc66"}}
+        }
+    }
+    ReplicatedStorage.Connection.inGame.Deployment:FireServer(unpack(args))
+    task.wait()
+
+    -- Voting and turn actions
+    ReplicatedStorage.Connection.inGame.Voting:FireServer()
+
+    -- Ensure entity model "14" exists, if not keep voting until it does
+    ensureEntityModelExists("14")
+
+    waitForStartTurn()
+    waitForEndTurn()
+
+    -- Movement actions
+    local moveActions = {
+        {
+            actionId = "20",
+            units = {
+                {["y"] = 944, ["x"] = -1272, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 0, ["range"] = 0, ["hidden"] = true},
+                {["y"] = 936, ["x"] = -1272, ["hidden"] = false, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 1, ["range"] = 1},
+                {["y"] = 928, ["x"] = -1272, ["hidden"] = false, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 2, ["range"] = 2},
+                {["y"] = 920, ["x"] = -1272, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Ramp", ["points"] = 3, ["range"] = 3}
+            }
+        },
+        {
+            actionId = "14",
+            units = {
+                {["y"] = 944, ["x"] = -1264, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 0, ["range"] = 0, ["hidden"] = true},
+                {["y"] = 936, ["x"] = -1264, ["hidden"] = false, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 1, ["range"] = 1},
+                {["y"] = 928, ["x"] = -1264, ["hidden"] = false, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 2, ["range"] = 2},
+                {["y"] = 920, ["x"] = -1264, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Ramp", ["points"] = 3, ["range"] = 3},
+                {["y"] = 912, ["x"] = -1264, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Plains", ["points"] = 4, ["range"] = 4}
+            }
+        },
+        {
+            actionId = "17",
+            units = {
+                {["y"] = 944, ["x"] = -1256, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 0, ["range"] = 0, ["hidden"] = true},
+                {["y"] = 936, ["x"] = -1256, ["hidden"] = false, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 1, ["range"] = 1},
+                {["y"] = 928, ["x"] = -1256, ["hidden"] = false, ["z"] = 0, ["terrain"] = "Plains", ["points"] = 2, ["range"] = 2},
+                {["y"] = 920, ["x"] = -1256, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Ramp", ["points"] = 3, ["range"] = 3}
+            }
+        }
+    }
+
+    for _, moveAction in ipairs(moveActions) do
+        args = {moveAction.actionId, moveAction.units}
+        ReplicatedStorage.Connection.inGame.actions.Move:FireServer(unpack(args))
+        waitForEndTurn()
+    end
+
+    -- Attack actions
+    local attackActions = {
+        {"20", 1, "9"},
+        {"14", 1, "9"}
+    }
+
+    for _, attackAction in ipairs(attackActions) do
+        ReplicatedStorage.Connection.inGame.actions.Attack:FireServer(unpack(attackAction))
+        waitForEndTurn()
+    end
+
+    -- Vote again and handle turn transitions
+    ReplicatedStorage.Connection.inGame.Voting:FireServer()
+    waitForStartTurn()
+    waitForEndTurn()
+
+    -- Additional moves
+    local additionalMoves = {
+        {
+            actionId = "14",
+            units = {
+                {["y"] = 912, ["x"] = -1264, ["z"] = 1, ["terrain"] = "Plains", ["points"] = 0, ["range"] = 0, ["hidden"] = true},
+                {["y"] = 904, ["x"] = -1264, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Road", ["points"] = 1, ["range"] = 1},
+                {["y"] = 904, ["x"] = -1256, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Road", ["points"] = 2, ["range"] = 2},
+                {["y"] = 904, ["x"] = -1248, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Plains", ["points"] = 3, ["range"] = 3},
+                {["y"] = 896, ["x"] = -1248, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Road", ["points"] = 4, ["range"] = 4}
+            }
+        }
+    }
+
+    for _, additionalMove in ipairs(additionalMoves) do
+        args = {additionalMove.actionId, additionalMove.units}
+        ReplicatedStorage.Connection.inGame.actions.Move:FireServer(unpack(args))
+        waitForEndTurn()
+
+        ReplicatedStorage.Connection.inGame.Voting:FireServer()
+        waitForStartTurn()
+        waitForEndTurn()
+    end
+
+    -- Second set of moves
+    local secondMoves = {
+        {
+            actionId = "14",
+            units = {
+                {["y"] = 896, ["x"] = -1248, ["z"] = 1, ["terrain"] = "Road", ["points"] = 0, ["range"] = 0, ["hidden"] = true},
+                {["y"] = 888, ["x"] = -1248, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Road", ["points"] = 1, ["range"] = 1},
+                {["y"] = 880, ["x"] = -1248, ["hidden"] = false, ["z"] = 1, ["terrain"] = "Road", ["points"] = 2, ["range"] = 2}
+            }
+        }
+    }
+
+    for _, move in ipairs(secondMoves) do
+        args = {move.actionId, move.units}
+        ReplicatedStorage.Connection.inGame.actions.Move:FireServer(unpack(args))
+        waitForEndTurn()
+    end
+
+    -- Transport and Capture
+    args = {"14", "16", -1248, 872}
+    ReplicatedStorage.Connection.inGame.actions.Transport:FireServer(unpack(args))
+    waitForEndTurn()
+
+    args = {"16", "3"}
+    ReplicatedStorage.Connection.inGame.actions.Capture:FireServer(unpack(args))
+    waitForEndTurn()
+end
+
+-- Run the whole action sequence
+executeActions()
+
+-- Detect win screen and return to main menu
+local function waitForWinAndReturn()
+    local returnButton = Players.LocalPlayer.PlayerGui.WinGui.MainFrame.Return
+    local originalText = returnButton.Text
+
+    repeat
+        task.wait()
+    until returnButton.Text ~= originalText
+
+    repeat
+        task.wait()
+    until returnButton.Text == originalText
+
+    ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
+end
+
+waitForWinAndReturn()
