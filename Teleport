@@ -18,7 +18,7 @@ waitForFilter()
 -- If EntityModels exist in Workspace, load the in-game script
 -- Otherwise, load the pre-game (selection) script
 if game:GetService("Workspace"):FindFirstChild("EntityModels") then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/474375w/djdbejxd/refs/heads/main/%E8%8F%9C%E9%B8%9F%E6%88%98%E4%BA%89'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/InGame'))()
 else
     loadstring(game:HttpGet('https://raw.githubusercontent.com/474375w/djdbejxd/refs/heads/main/%E8%8F%9C%E9%B8%9F%E6%88%98%E4%BA%89%E9%80%89%E6%8B%A9'))()
 end
