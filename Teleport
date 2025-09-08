@@ -52,7 +52,7 @@ Players.LocalPlayer.OnTeleport:Connect(function(State)
             waitForFilter()
 
             -- Load the framework script after teleport
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/474375w/djdbejxd/refs/heads/main/%E8%8F%9C%E9%B8%9F%E6%A1%86%E6%9E%B6'))()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/Teleport'))()
         ]])
     end
 end)
