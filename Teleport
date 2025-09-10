@@ -57,11 +57,11 @@ Players.LocalPlayer.OnTeleport:Connect(function(State)
     end
 end)
 
--- === Failsafe: re-run after 2 minutes if teleport never triggers ===
 task.spawn(function()
-    task.wait(90) 
-    if not TeleportCheck then
-        print("Timeout reached, forcing teleport script reload...")
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/Teleport'))()
+    while true do
+        task.wait(25) -- wait 25 seconds each cycle
+        if not TeleportCheck then
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame'))()
+        end
     end
 end)
