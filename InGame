@@ -167,6 +167,9 @@ end
 -- Run the whole action sequence
 executeActions()
 
+-- Flag to prevent double-return
+local hasReturned = false
+
 -- Detect win screen and return to main menu
 local function waitForWinAndReturn()
     local returnButton = Players.LocalPlayer.PlayerGui.WinGui.MainFrame.Return
@@ -180,7 +183,22 @@ local function waitForWinAndReturn()
         task.wait()
     until returnButton.Text == originalText
 
-    ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
+    if not hasReturned then
+        hasReturned = true
+        ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
+    end
 end
 
-waitForWinAndReturn()
+-- Auto return fallback after 2 minutes
+local function autoReturnTimeout()
+    task.wait(120)
+    if not hasReturned then
+        hasReturned = true
+        print("Timeout reached, forcing return...")
+        ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
+    end
+end
+
+-- Run both in parallel
+task.spawn(waitForWinAndReturn)
+task.spawn(autoReturnTimeout)
