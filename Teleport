@@ -59,7 +59,7 @@ end)
 
 -- === Failsafe: re-run after 2 minutes if teleport never triggers ===
 task.spawn(function()
-    task.wait(120) -- 2 minute timeout
+    task.wait(90) 
     if not TeleportCheck then
         print("Timeout reached, forcing teleport script reload...")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/Teleport'))()
