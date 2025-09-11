@@ -1,6 +1,15 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
+task.spawn(function()
+    while true do
+        task.wait(20) -- wait 20 seconds each cycle
+        if not TeleportCheck then
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame'))()
+        end
+    end
+end)
+
 -- Compatibility for different executors (Synapse, Fluxus, etc.)
 local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 local TeleportCheck = false
@@ -57,11 +66,3 @@ Players.LocalPlayer.OnTeleport:Connect(function(State)
     end
 end)
 
-task.spawn(function()
-    while true do
-        task.wait(25) -- wait 25 seconds each cycle
-        if not TeleportCheck then
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame'))()
-        end
-    end
-end)
