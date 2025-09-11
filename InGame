@@ -2,6 +2,13 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local task = task
 
+-- Always force return after 75 seconds
+task.spawn(function()
+    task.wait(75)
+    print("75s reached, forcing return...")
+    ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
+end)
+
 -- Waits for the End Turn button to have the desired text
 local function waitForButtonText(targetText)
     local endTurnButton = Players.LocalPlayer.PlayerGui.GameGui.EndTurn.Button
@@ -182,8 +189,4 @@ task.spawn(function()
     ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
 end)
 
--- Always force return after 90 seconds
-task.delay(90, function()
-    print("90s reached, forcing return...")
-    ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
-end)
+
