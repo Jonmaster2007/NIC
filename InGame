@@ -2,10 +2,10 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local task = task
 
--- Always force return after 75 seconds
+-- Always force return after 50 seconds
 task.spawn(function()
-    task.wait(75)
-    print("75s reached, forcing return...")
+    task.wait(50)
+    print("50s reached, forcing return...")
     ReplicatedStorage.Connection.inGame.ReturnBack:FireServer()
 end)
 
