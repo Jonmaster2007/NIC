@@ -1,47 +1,9 @@
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 
-task.spawn(function()
-    while true do
-        task.wait(20) -- wait 20 seconds each cycle
-        if not TeleportCheck then
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame'))()
-        end
-    end
-end)
-
--- Compatibility for different executors (Synapse, Fluxus, etc.)
-local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-local TeleportCheck = false
-
--- Wait until Workspace.Filter exists before running
-local function waitForFilter()
-    while not game:GetService("Workspace"):FindFirstChild("Filter") do
-        RunService.Heartbeat:Wait() -- check every frame
-    end
-end
-
--- Wait for Filter before continuing
-waitForFilter()
-
--- If EntityModels exist in Workspace, load the in-game script
--- Otherwise, load the pre-game (selection) script
-if game:GetService("Workspace"):FindFirstChild("EntityModels") then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/InGame'))()
-else
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame'))()
-end
-
--- Handle teleporting: re-execute script after teleport
-Players.LocalPlayer.OnTeleport:Connect(function(State)
-    if not TeleportCheck and queueteleport then
-        TeleportCheck = true
-        queueteleport([[
+local v0=game:GetService("Players");local v1=game:GetService("RunService");task.spawn(function() while true do local v6=0 -0 ;while true do if (v6==(0 -0)) then task.wait(639 -(555 + 64) );if  not TeleportCheck then loadstring(game:HttpGet("https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame"))();end break;end end end end);local v2=(syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) ;local v3=false;local function v4() while  not game:GetService("Workspace"):FindFirstChild("Filter") do v1.Heartbeat:Wait();end end v4();if game:GetService("Workspace"):FindFirstChild("EntityModels") then loadstring(game:HttpGet("https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/InGame"))();else loadstring(game:HttpGet("https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/PreGame"))();end v0.LocalPlayer.OnTeleport:Connect(function(v5) if ( not v3 and v2) then local v7=931 -(857 + 74) ;while true do if (v7==0) then v3=true;v2([[
             local RunService = game:GetService("RunService")
             local loaded = false
             local connection
 
-            -- Wait for the game to fully load
             connection = RunService.Heartbeat:Connect(function()
                 if game:IsLoaded() then
                     loaded = true
@@ -49,10 +11,8 @@ Players.LocalPlayer.OnTeleport:Connect(function(State)
                 end
             end)
 
-            -- Fallback: wait up to 5 seconds
             repeat wait(1) until loaded or time() > 5
 
-            -- Wait until Workspace.Filter exists
             local function waitForFilter()
                 while not game:GetService("Workspace"):FindFirstChild("Filter") do
                     RunService.Heartbeat:Wait()
@@ -60,9 +20,5 @@ Players.LocalPlayer.OnTeleport:Connect(function(State)
             end
             waitForFilter()
 
-            -- Load the framework script after teleport
             loadstring(game:HttpGet('https://raw.githubusercontent.com/Jonmaster2007/NIC/refs/heads/main/Teleport'))()
-        ]])
-    end
-end)
-
+        ]]);break;end end end end);
